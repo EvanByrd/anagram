@@ -15,7 +15,7 @@ func main() {
 	dictStartTime := time.Now()
 
 	// Get the dictionary file.
-	dictionary, dictError := getDictionary(*dictionaryPath)
+	dictionary, sortedWordsDictionary, dictError := getDictionary(*dictionaryPath)
 	if dictError != nil {
 		panic(dictError)
 	}
@@ -34,7 +34,7 @@ func main() {
 		anagramStartTime := time.Now()
 
 		// Collect anagrams out of dictionary
-		anagrams, anagError := getAnagrams(dictionary, word)
+		anagrams, anagError := getAnagrams(dictionary, sortedWordsDictionary, word)
 		if anagError != nil {
 			panic(anagError)
 		}
@@ -58,22 +58,24 @@ func main() {
 }
 
 // Go fetch the dictionary from the specified path
-func getDictionary(path string) ([]string, error) {
+func getDictionary(path string) ([]string, []string, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer file.Close()
 
 	var lines []string
+	var sortedWordLines []string
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
+		sortedWordLines = append(sortedWordLines, SortString(scanner.Text()))
 	}
 
-	return lines, scanner.Err()
+	return lines, sortedWordLines, scanner.Err()
 }
 
 // Display a prompt for user input and then return the input.
@@ -92,12 +94,12 @@ func getUserInput() (string, error) {
 }
 
 // Gather all of the anagrams of the given word.
-func getAnagrams(dictionary []string, word string) ([]string, error) {
+func getAnagrams(dictionary []string, sortedWordDictionary []string, word string) ([]string, error) {
 	var output []string
 	wordLetters := SortString(word)
 
-	for i := 0; i < len(dictionary); i++ {
-		if strings.EqualFold(wordLetters, SortString(dictionary[i])) && !strings.EqualFold(word, dictionary[i]) {
+	for i := 0; i < len(sortedWordDictionary); i++ {
+		if strings.EqualFold(wordLetters, sortedWordDictionary[i]) && !strings.EqualFold(word, dictionary[i]) {
 			output = append(output, dictionary[i])
 		}
 	}
