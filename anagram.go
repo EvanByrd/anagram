@@ -32,11 +32,13 @@ func main() {
 
 	for !strings.EqualFold(word, "exit") {
 		anagramStartTime := time.Now()
+
 		// Collect anagrams out of dictionary
 		anagrams, anagError := getAnagrams(dictionary, word)
 		if anagError != nil {
 			panic(anagError)
 		}
+
 		anagramEndTime := time.Now()
 
 		if len(anagrams) == 0 {
@@ -61,20 +63,24 @@ func getDictionary(path string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer file.Close()
 
 	var lines []string
 	scanner := bufio.NewScanner(file)
+
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
+
 	return lines, scanner.Err()
 }
 
 // Display a prompt for user input and then return the input.
 func getUserInput() (string, error) {
-	textReader := bufio.NewReader(os.Stdin)
 	fmt.Print("\nEnter a word: ")
+
+	textReader := bufio.NewReader(os.Stdin)
 	word, err := textReader.ReadString('\n')
 	if err != nil {
 		return "", err
@@ -89,6 +95,7 @@ func getUserInput() (string, error) {
 func getAnagrams(dictionary []string, word string) ([]string, error) {
 	var output []string
 	wordLetters := SortString(word)
+
 	for i := 0; i < len(dictionary); i++ {
 		if strings.EqualFold(wordLetters, SortString(dictionary[i])) && !strings.EqualFold(word, dictionary[i]) {
 			output = append(output, dictionary[i])
@@ -98,8 +105,11 @@ func getAnagrams(dictionary []string, word string) ([]string, error) {
 	return output, nil
 }
 
-func SortString(w string) string {
-	s := strings.Split(w, "")
-	sort.Strings(s)
-	return strings.Join(s, "")
+// Sort a words letters alphabetically
+func SortString(word string) string {
+	splitWord := strings.Split(word, "")
+	sort.Strings(splitWord)
+	output := strings.Join(splitWord, "")
+
+	return output
 }
