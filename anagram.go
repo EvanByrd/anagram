@@ -78,6 +78,15 @@ func getDictionary(path string) ([]string, []string, error) {
 	return lines, sortedWordLines, scanner.Err()
 }
 
+// Sort a words letters alphabetically
+func SortString(word string) string {
+	splitWord := strings.Split(word, "")
+	sort.Strings(splitWord)
+	output := strings.Join(splitWord, "")
+
+	return output
+}
+
 // Display a prompt for user input and then return the input.
 func getUserInput() (string, error) {
 	fmt.Print("\nEnter a word: ")
@@ -105,13 +114,4 @@ func getAnagrams(dictionary []string, sortedWordDictionary []string, word string
 	}
 
 	return output, nil
-}
-
-// Sort a words letters alphabetically
-func SortString(word string) string {
-	splitWord := strings.Split(word, "")
-	sort.Strings(splitWord)
-	output := strings.Join(splitWord, "")
-
-	return output
 }
