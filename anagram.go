@@ -11,23 +11,29 @@ import (
 )
 
 func main() {
-	var dictionaryPath = flag.String("dict", "./dictionary.txt", "")
+	dictionaryPath := getDictionaryPath()
 	dictStartTime := time.Now()
 
 	// Get the dictionary file.
-	dictionary, sortedWordsDictionary, dictError := getDictionary(*dictionaryPath)
+	dictionary, sortedWordsDictionary, dictError := getDictionary(dictionaryPath)
 	if dictError != nil {
 		panic(dictError)
 	}
+
 	dictEndTime := time.Now()
 	fmt.Println(dictEndTime.Sub(dictStartTime))
 
+	inputLoop(dictionary, sortedWordsDictionary)
+}
+
+// Infinite loop of user input.
+func inputLoop(dictionary []string, sortedWordsDictionary []string) {
 	var word string
 	var wordError error
 	// Prompt the user to input a word.
 	word, wordError = getUserInput()
 	if wordError != nil {
-		panic(dictError)
+		panic(wordError)
 	}
 
 	for !strings.EqualFold(word, "exit") {
@@ -51,10 +57,18 @@ func main() {
 		// Prompt the user to input another word.
 		word, wordError = getUserInput()
 		if wordError != nil {
-			panic(dictError)
+			panic(wordError)
 		}
-
 	}
+}
+
+func getDictionaryPath() string {
+	var dictionaryPath string
+	flag.StringVar(&dictionaryPath, "dict", "./dictionary.txt", "The path to the dictionary file.")
+	flag.Parse()
+
+	fmt.Println("Loading dictionary from " + dictionaryPath)
+	return dictionaryPath
 }
 
 // Go fetch the dictionary from the specified path
@@ -78,18 +92,9 @@ func getDictionary(path string) ([]string, []string, error) {
 	return lines, sortedWordLines, scanner.Err()
 }
 
-// Sort a words letters alphabetically
-func SortString(word string) string {
-	splitWord := strings.Split(word, "")
-	sort.Strings(splitWord)
-	output := strings.Join(splitWord, "")
-
-	return output
-}
-
 // Display a prompt for user input and then return the input.
 func getUserInput() (string, error) {
-	fmt.Print("\nEnter a word: ")
+	fmt.Print("\nEnter a word (Enter exit to quit): ")
 
 	textReader := bufio.NewReader(os.Stdin)
 	word, err := textReader.ReadString('\n')
@@ -114,4 +119,27 @@ func getAnagrams(dictionary []string, sortedWordDictionary []string, word string
 	}
 
 	return output, nil
+}
+
+// ------------------------------------------------------------------------------------------------------------------
+
+type sortRunes []rune
+
+// Sort a words letters alphabetically
+func (runeList sortRunes) Less(i, j int) bool {
+	return runeList[i] < runeList[j]
+}
+
+func (runeList sortRunes) Swap(i, j int) {
+	runeList[i], runeList[j] = runeList[j], runeList[i]
+}
+
+func (runeList sortRunes) Len() int {
+	return len(runeList)
+}
+
+func SortString(word string) string {
+	runes := []rune(word)
+	sort.Sort(sortRunes(runes))
+	return string(runes)
 }
