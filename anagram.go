@@ -62,6 +62,7 @@ func inputLoop(dictionary []string, sortedWordsDictionary []string) {
 	}
 }
 
+// Get the path to the dictionary file using user input.
 func getDictionaryPath() string {
 	var dictionaryPath string
 	flag.StringVar(&dictionaryPath, "dict", "./dictionary.txt", "The path to the dictionary file.")
@@ -125,7 +126,6 @@ func getAnagrams(dictionary []string, sortedWordDictionary []string, word string
 
 type sortRunes []rune
 
-// Sort a words letters alphabetically
 func (runeList sortRunes) Less(i, j int) bool {
 	return runeList[i] < runeList[j]
 }
@@ -138,6 +138,7 @@ func (runeList sortRunes) Len() int {
 	return len(runeList)
 }
 
+// Sort a words letters alphabetically
 func SortString(word string) string {
 	runes := []rune(word)
 	sort.Sort(sortRunes(runes))
