@@ -109,7 +109,7 @@ func getUserInput() (string, error) {
 }
 
 // Gather all of the anagrams of the given word.
-func getAnagrams(dictionary []string, sortedWordDictionary []string, word string) ([]string, error) {
+func getAnagrams(dictionary []string, sortedWordDictionary []string, word string) (string, error) {
 	var output []string
 	wordLetters := SortString(word)
 
@@ -119,7 +119,7 @@ func getAnagrams(dictionary []string, sortedWordDictionary []string, word string
 		}
 	}
 
-	return output, nil
+	return "[" + strings.Join(output, ", ") + "]", nil
 }
 
 // ------------------------------------------------------------------------------------------------------------------
