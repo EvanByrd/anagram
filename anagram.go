@@ -19,6 +19,7 @@ func main() {
 	if dictError != nil {
 		panic(dictError)
 	}
+	fmt.Println(len(dictionary), len(sortedWordsDictionary))
 
 	dictEndTime := time.Now()
 	fmt.Println(dictEndTime.Sub(dictStartTime))
@@ -36,23 +37,21 @@ func inputLoop(dictionary []string, sortedWordsDictionary []string) {
 		panic(wordError)
 	}
 
+	var anagrams string
+	var anagError error
 	for !strings.EqualFold(word, "exit") {
-		anagramStartTime := time.Now()
+		if word != "" {
+			// Collect anagrams out of dictionary
+			anagramStartTime := time.Now()
+			anagrams, anagError = getAnagrams(dictionary, sortedWordsDictionary, word)
+			anagramEndTime := time.Now()
+			if anagError != nil {
+				panic(anagError)
+			}
 
-		// Collect anagrams out of dictionary
-		anagrams, anagError := getAnagrams(dictionary, sortedWordsDictionary, word)
-		if anagError != nil {
-			panic(anagError)
-		}
-
-		anagramEndTime := time.Now()
-
-		if len(anagrams) == 0 {
-			fmt.Println("No anagrams found for " + word)
-		} else {
 			fmt.Println(anagrams)
+			fmt.Println(anagramEndTime.Sub(anagramStartTime))
 		}
-		fmt.Println(anagramEndTime.Sub(anagramStartTime))
 
 		// Prompt the user to input another word.
 		word, wordError = getUserInput()
@@ -84,10 +83,12 @@ func getDictionary(path string) ([]string, []string, error) {
 	var lines []string
 	var sortedWordLines []string
 	scanner := bufio.NewScanner(file)
+	var scannerText string
 
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-		sortedWordLines = append(sortedWordLines, SortString(scanner.Text()))
+		scannerText = scanner.Text()
+		lines = append(lines, scannerText)
+		sortedWordLines = append(sortedWordLines, SortString(scannerText))
 	}
 
 	return lines, sortedWordLines, scanner.Err()
@@ -119,7 +120,11 @@ func getAnagrams(dictionary []string, sortedWordDictionary []string, word string
 		}
 	}
 
-	return "[" + strings.Join(output, ", ") + "]", nil
+	if len(output) == 0 {
+		return "No anagrams found for " + word, nil
+	} else {
+		return "[" + strings.Join(output, ", ") + "]", nil
+	}
 }
 
 // ------------------------------------------------------------------------------------------------------------------
@@ -140,7 +145,7 @@ func (runeList sortRunes) Len() int {
 
 // Sort a words letters alphabetically
 func SortString(word string) string {
-	runes := []rune(word)
+	runes := []rune(strings.ToLower(word))
 	sort.Sort(sortRunes(runes))
 	return string(runes)
 }
