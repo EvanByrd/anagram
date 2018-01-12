@@ -104,7 +104,6 @@ func getUserInput() (string, error) {
 	}
 
 	output := strings.Replace(word, "\n", "", -1)
-
 	return output, err
 }
 
@@ -128,23 +127,24 @@ func getAnagrams(dictionary []string, sortedWordDictionary []string, word string
 
 // ------------------------------------------------------------------------------------------------------------------
 
-type sortRunes []rune
+// This would normally be in its own file to be imported, but this code is way too small to justify moving this.
+type SortRunes []rune
 
-func (runeList sortRunes) Less(i, j int) bool {
+func (runeList SortRunes) Less(i, j int) bool {
 	return runeList[i] < runeList[j]
 }
 
-func (runeList sortRunes) Swap(i, j int) {
+func (runeList SortRunes) Swap(i, j int) {
 	runeList[i], runeList[j] = runeList[j], runeList[i]
 }
 
-func (runeList sortRunes) Len() int {
+func (runeList SortRunes) Len() int {
 	return len(runeList)
 }
 
 // Sort a words letters alphabetically
 func SortString(word string) string {
 	runes := []rune(strings.ToLower(word))
-	sort.Sort(sortRunes(runes))
+	sort.Sort(SortRunes(runes))
 	return string(runes)
 }
