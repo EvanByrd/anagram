@@ -12,15 +12,15 @@ import (
 
 func main() {
 	dictionaryPath := getDictionaryPath()
-	dictStartTime := time.Now()
 
 	// Get the dictionary file.
+	dictStartTime := time.Now()
 	dictionary, sortedWordsDictionary, dictError := getDictionary(dictionaryPath)
+	dictEndTime := time.Now()
 	if dictError != nil {
 		panic(dictError)
 	}
 
-	dictEndTime := time.Now()
 	fmt.Println(dictEndTime.Sub(dictStartTime))
 
 	inputLoop(dictionary, sortedWordsDictionary)
