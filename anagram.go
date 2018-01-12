@@ -19,7 +19,6 @@ func main() {
 	if dictError != nil {
 		panic(dictError)
 	}
-	fmt.Println(len(dictionary), len(sortedWordsDictionary))
 
 	dictEndTime := time.Now()
 	fmt.Println(dictEndTime.Sub(dictStartTime))
